@@ -25,7 +25,7 @@ jobs:
 
       - name: Update README
         run: |
-          sed -i "s/| Current Commit | Date |/| Current Commit | Date |\n|---------------|------|\n| ${CURRENT_COMMIT} | ${CURRENT_DATE} |\n| ${PREVIOUS_COMMIT} | ${PREVIOUS_DATE} |/" README.md
+          echo "${CURRENT_COMMIT} | ${CURRENT_DATE} |\n| ${PREVIOUS_COMMIT} | ${PREVIOUS_DATE} |" >> README.md
 
       - name: Commit and push changes
         run: |
