@@ -1,0 +1,37 @@
+name: Update README with commit info
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Get current commit information
+        id: commit_info
+        run: |
+          CURRENT_COMMIT=$(git log -1 --pretty=%h)
+          CURRENT_DATE=$(git log -1 --pretty=%cd --date=short)
+          PREVIOUS_COMMIT=$(git log -2 --skip=1 --pretty=%h)
+          PREVIOUS_DATE=$(git log -2 --skip=1 --pretty=%cd --date=short)
+          echo "::set-output name=current_commit::$CURRENT_COMMIT"
+          echo "::set-output name=current_date::$CURRENT_DATE"
+          echo "::set-output name=previous_commit::$PREVIOUS_COMMIT"
+          echo "::set-output name=previous_date::$PREVIOUS_DATE"
+
+      - name: Update README
+        run: |
+          sed -i "s/| Current Commit | Date |/| Current Commit | Date |\n|---------------|------|\n| ${CURRENT_COMMIT} | ${CURRENT_DATE} |\n| ${PREVIOUS_COMMIT} | ${PREVIOUS_DATE} |/" README.md
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git commit -m "Update README with latest commit info"
+          git push
+
